@@ -1,0 +1,55 @@
+#TASK 3
+import speech_recognition as sr
+import pyttsx3
+
+class VoiceAssistant:
+    def __init__(self):
+        self.recognizer = sr.Recognizer()
+        self.speaker = pyttsx3.init()
+
+    def listen(self):
+        """
+        Listen to the user's voice input.
+        """
+        with sr.Microphone() as source:
+            print("Listening...")
+            self.recognizer.adjust_for_ambient_noise(source)
+            audio = self.recognizer.listen(source)
+
+        try:
+            print("Recognizing...")
+            query = self.recognizer.recognize_google(audio)
+            print("User said:", query)
+            return query.lower()
+        except sr.UnknownValueError:
+            print("Sorry, I couldn't understand what you said.")
+            return ""
+        except sr.RequestError as e:
+            print(f"Could not request results from Google Speech Recognition service; {e}")
+            return ""
+
+    def speak(self, text):
+        """
+        Speak the given text.
+        """
+        self.speaker.say(text)
+        self.speaker.runAndWait()
+
+    def run(self):
+        """
+        Start the voice assistant.
+        """
+        self.speak("Hello! How can I assist you today?")
+        while True:
+            query = self.listen()
+            if "exit" in query:
+                self.speak("Goodbye!")
+                break
+            elif "hello" in query:
+                self.speak("Hello there!")
+            else:
+                self.speak("Sorry, I didn't understand that command.")
+
+# Create and run the voice assistant
+assistant = VoiceAssistant()
+assistant.run()
